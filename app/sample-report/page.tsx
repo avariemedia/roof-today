@@ -7,12 +7,12 @@ import RoofDiagram from "@/components/RoofDiagram";
 export const metadata = {
   title: "Free Roof Measurement Sample Report — Any U.S. Address",
   description:
-    "Generate a free roof measurement sample report on any U.S. address. See total squares, pitch, and facet diagram instantly. Unlock full detail for $19.",
+    "Generate a free roof measurement sample report on any U.S. address. See total squares, pitch, and facet diagram instantly. Unlock full detail from $12.50 per report.",
   alternates: { canonical: "/sample-report" },
 };
 
 const faqItems = [
-  { q: "Is the sample report really free?", a: "Yes. You can preview any U.S. address — total squares, predominant pitch, and aerial facet diagram — for free, no signup required. Full facet-by-facet measurements and the downloadable PDF unlock for $19." },
+  { q: "Is the sample report really free?", a: "Yes. You can preview any U.S. address — total squares, predominant pitch, and aerial facet diagram — for free, no signup required. Full facet-by-facet measurements and the downloadable PDF unlock with any credit pack \($25 for 2, $50 for 10\)." },
   { q: "How accurate is the preview?", a: "The preview uses the same measurement engine as paid reports. The numbers you see are the numbers you'll get — we just lock the deeper detail behind checkout." },
   { q: "Do I need an account?", a: "No. Enter an address and go. If you unlock, we create your account automatically via magic link." },
 ];
@@ -29,7 +29,7 @@ export default function SampleReportPage() {
             See a roof report on <span className="text-trust-700">any address.</span> Free.
           </h1>
           <p className="mt-4 text-lg text-stone-600 max-w-2xl mx-auto">
-            Test Roof Today on a property you already know — your house, a current job, or a storm-damaged claim. If the numbers match, unlock the full report for $19.
+            Test Roof Today on a property you already know — your house, a current job, or a storm-damaged claim. If the numbers match, unlock a credit pack starting at $25 for 2 reports.
           </p>
           <div className="mt-8 max-w-xl mx-auto"><AddressCapture size="lg" autoFocus /></div>
         </div>
@@ -46,7 +46,7 @@ export default function SampleReportPage() {
               <li className="flex gap-2"><span className="text-go-600">✓</span> Predominant pitch</li>
               <li className="flex gap-2"><span className="text-go-600">✓</span> Facet count</li>
             </ul>
-            <h3 className="mt-8 font-semibold text-ink-900">Unlock for $19:</h3>
+            <h3 className="mt-8 font-semibold text-ink-900">Unlock a credit pack:</h3>
             <ul className="mt-3 space-y-2 text-stone-600 text-sm">
               <li>• Ridge, hip, valley, eave, rake linear feet</li>
               <li>• Waste factor calculation</li>

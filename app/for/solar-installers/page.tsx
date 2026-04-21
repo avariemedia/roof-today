@@ -3,7 +3,7 @@ import AudiencePageTemplate from "@/components/AudiencePageTemplate";
 export const metadata = {
   title: "Roof Measurements for Solar Installers — Instant Pitch & Facet Data",
   description:
-    "Solar installers: get accurate roof pitch, facet orientation, and square footage for solar array design. $19 per report. No subscription.",
+    "Solar installers: get accurate roof pitch, facet orientation, and square footage for solar array design. From $5 per report. No subscription.",
   alternates: { canonical: "/for/solar-installers" },
 };
 

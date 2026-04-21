@@ -1,9 +1,9 @@
 import AudiencePageTemplate from "@/components/AudiencePageTemplate";
 
 export const metadata = {
-  title: "Roof Measurement Reports for Roofing Contractors — $19 | Roof Today",
+  title: "Roof Measurement Reports for Roofing Contractors — From $5 Per Report | Roof Today",
   description:
-    "The roof measurement tool built for roofing contractors. $19 per report, delivered in minutes, no subscription. Free preview on any address.",
+    "The roof measurement tool built for roofing contractors. As low as $4 per report, delivered in minutes, no subscription. Free preview on any address.",
   alternates: { canonical: "/for/roofing-contractors" },
 };
 
@@ -20,7 +20,7 @@ export default function Page() {
         { title: "Material ordering", body: "Accurate squares + waste factor means no over-ordering and no surprise mid-job trips." },
       ]}
       benefits={[
-        "$19 per report — budget-friendly for solo ops and crews",
+        "Tiered pricing ($25 for 2, $50 for 10) — budget-friendly for solo ops and crews",
         "No subscription lock-in",
         "Mobile-first — run it from your truck",
         "Insurance-ready PDFs every time",

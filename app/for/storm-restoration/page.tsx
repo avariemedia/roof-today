@@ -3,7 +3,7 @@ import AudiencePageTemplate from "@/components/AudiencePageTemplate";
 export const metadata = {
   title: "Roof Measurements for Storm Restoration — Canvass Faster, Close More Claims",
   description:
-    "Storm restoration contractors: pre-measure entire neighborhoods before knocking. $19 per report. Insurance-ready. No subscription.",
+    "Storm restoration contractors: pre-measure entire neighborhoods before knocking. From $5 per report. Insurance-ready. No subscription.",
   alternates: { canonical: "/for/storm-restoration" },
 };
 
@@ -20,7 +20,7 @@ export default function Page() {
       ]}
       benefits={[
         "Pre-measure any address in minutes",
-        "$19 per report keeps canvass economics healthy",
+        "As low as $4 per report keeps canvass economics healthy",
         "Insurance-ready PDFs",
         "No subscription — scale up or down with the storm cycle",
         "Mobile-first for field crews",

@@ -4,7 +4,7 @@ import ReportPreviewClient from "./ReportPreviewClient";
 export const metadata = {
   title: "Your Roof Report Preview",
   description:
-    "Preview your roof measurement report free. Total squares, pitch, and diagram are free — unlock facet-level measurements for $19.",
+    "Preview your roof measurement report free. Total squares, pitch, and diagram are free — unlock facet-level measurements starting at $12.50 \(2-pack $25\).",
   robots: { index: false, follow: false },
 };
 

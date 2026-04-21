@@ -1,7 +1,7 @@
 import { Check, X } from "lucide-react";
 
 const rows = [
-  { feature: "Price per report", rt: "$19", ev: "~$85", gaf: "~$65", hover: "~$50" },
+  { feature: "Price per report", rt: "$4–$12.50", ev: "~$85", gaf: "~$65", hover: "~$50" },
   { feature: "Turnaround", rt: "Minutes", ev: "2–24 hrs", gaf: "Hours", hover: "Same day" },
   { feature: "Subscription required", rt: false, ev: true, gaf: true, hover: true },
   { feature: "Free sample preview", rt: true, ev: false, gaf: false, hover: false },

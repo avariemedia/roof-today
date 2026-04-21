@@ -3,7 +3,7 @@ import VsPageTemplate from "@/components/VsPageTemplate";
 export const metadata = {
   title: "EagleView Alternative — Roof Today is 70% Cheaper, Delivered in Minutes",
   description:
-    "Looking for an EagleView alternative? Roof Today delivers the same roof measurement reports for $19 (vs ~$85), in minutes, with no subscription. Free sample on any address.",
+    "Looking for an EagleView alternative? Roof Today delivers the same roof measurement reports for as low as $4 (vs ~$85), in minutes, with no subscription. Free sample on any address.",
   alternates: { canonical: "/vs/eagleview" },
 };
 
@@ -12,9 +12,9 @@ export default function Page() {
     <VsPageTemplate
       competitor="EagleView"
       tagline="Same measurements. 77% cheaper. No subscription."
-      intro="EagleView is the legacy name in aerial roof measurements. It works — but it costs ~$85 per report, locks you into subscriptions or minimums, and turnaround can stretch from hours to a full day. Roof Today was built as the no-BS alternative for contractors who just want accurate measurements, fast, at a fair price. Same measurement categories, ±2% accuracy guarantee, insurance-ready PDFs — for $19."
+      intro="EagleView is the legacy name in aerial roof measurements. It works — but it costs ~$85 per report, locks you into subscriptions or minimums, and turnaround can stretch from hours to a full day. Roof Today was built as the no-BS alternative for contractors who just want accurate measurements, fast, at a fair price. Same measurement categories, ±2% accuracy guarantee, insurance-ready PDFs — for as low as $4."
       rows={[
-        { feature: "Price per report", rt: "$19", them: "~$85" },
+        { feature: "Price per report", rt: "From $5", them: "~$85" },
         { feature: "Turnaround", rt: "Minutes", them: "2–24 hours" },
         { feature: "Subscription required", rt: false, them: true },
         { feature: "Free sample preview", rt: true, them: false },
@@ -25,7 +25,7 @@ export default function Page() {
         { feature: "Cancel anytime", rt: true, them: "With friction" },
       ]}
       pros={[
-        "~$66 savings on every single report",
+        "~$72–$81 savings on every single report",
         "No subscription. Pay only when you need a report.",
         "Reports in minutes, not hours",
         "Free preview on any address before you pay",
@@ -47,7 +47,7 @@ export default function Page() {
         },
         {
           q: "How much does an EagleView report cost?",
-          a: "EagleView reports typically run $60–$100+ per report depending on complexity and plan tier. Roof Today is $19 flat — roughly 70–77% less.",
+          a: "EagleView reports typically run $60–$100+ per report depending on complexity and plan tier. Roof Today runs $4–$12.50 per report depending on pack size — 85%–95% less.",
         },
         {
           q: "Can I cancel EagleView and switch?",

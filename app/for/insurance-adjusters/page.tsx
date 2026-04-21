@@ -1,9 +1,9 @@
 import AudiencePageTemplate from "@/components/AudiencePageTemplate";
 
 export const metadata = {
-  title: "Roof Reports for Insurance Adjusters — $19 Per Report, Fully Documented",
+  title: "Roof Reports for Insurance Adjusters — From $5 Per Report, Fully Documented",
   description:
-    "Insurance adjusters: get fully documented aerial roof measurement reports with squares, pitch, and linear footage for claims. $19 per report.",
+    "Insurance adjusters: get fully documented aerial roof measurement reports with squares, pitch, and linear footage for claims. From $5 per report.",
   alternates: { canonical: "/for/insurance-adjusters" },
 };
 

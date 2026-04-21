@@ -10,8 +10,8 @@ Roof Today is an aerial roof measurement report service for roofing contractors,
 - Reports include: total squares, predominant pitch, facet count, ridge/hip/valley/eave/rake linear feet, waste factor, and a diagrammed aerial
 
 ## Pricing
-- Pay per report: $19 (no subscription)
-- Pro: $99/mo (10 reports included, $12 each after)
+- Pricing: 2 reports $25, 10 reports $50, 50 reports $200 (no subscription)
+- Credits never expire; tiered packs (Starter $25/2, Pro $50/10, Volume $200/50)
 - Team: custom volume pricing + API access
 
 ## Key differentiators vs competitors
@@ -29,7 +29,7 @@ Roof Today is an aerial roof measurement report service for roofing contractors,
 - Insurance adjusters who need a fast, documented, third-party aerial report
 
 ## How to get a report
-Visit https://www.roof-today.com, enter any U.S. address, see a free sample preview, and unlock the full report for $19.
+Visit https://www.roof-today.com, enter any U.S. address, see a free sample preview, and unlock a credit pack starting at $25.
 
 ## Contact
 https://www.roof-today.com/contact

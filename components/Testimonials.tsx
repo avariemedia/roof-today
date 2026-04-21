@@ -3,14 +3,14 @@ import { Star } from "lucide-react";
 const testimonials = [
   {
     quote:
-      "I was paying $85 a report with EagleView. Roof Today gave me the same measurements for $19 in under 5 minutes. I cancelled my EagleView subscription the same day.",
+      "I was paying $85 a report with EagleView. Roof Today gave me the same measurements for $12.50 in under 5 minutes. I cancelled my EagleView subscription the same day.",
     name: "Marcus Reilly",
     role: "Owner, Reilly Roofing Co.",
     city: "Tampa, FL",
   },
   {
     quote:
-      "The free sample sold me. I previewed my own house, saw the report was real, paid the $19, and got the full PDF before I finished my coffee.",
+      "The free sample sold me. I previewed my own house, saw the report was real, paid $25 for a 2-pack, and got the full PDF before I finished my coffee.",
     name: "Danielle Cho",
     role: "Estimator, North Star Exteriors",
     city: "Minneapolis, MN",

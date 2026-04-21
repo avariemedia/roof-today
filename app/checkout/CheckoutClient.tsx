@@ -5,13 +5,25 @@ import { useState } from "react";
 import { Loader2, Lock, ShieldCheck, ArrowLeft, Mail } from "lucide-react";
 import Link from "next/link";
 
+type PlanId = "starter" | "pro" | "volume";
+
+const PLANS: Record<PlanId, { name: string; price: number; reports: number; perReport: string; tagline: string }> = {
+  starter: { name: "Starter", price: 25, reports: 2, perReport: "$12.50", tagline: "Great for trying it out" },
+  pro: { name: "Pro", price: 50, reports: 10, perReport: "$5.00", tagline: "Best value for most contractors" },
+  volume: { name: "Volume", price: 200, reports: 50, perReport: "$4.00", tagline: "For teams running 50+/mo" },
+};
+
 export default function CheckoutClient() {
   const params = useSearchParams();
   const address = params.get("address") || "";
   const reportId = params.get("report") || "";
+  const initialPlan = (params.get("plan") as PlanId) || "starter";
+  const [plan, setPlan] = useState<PlanId>(PLANS[initialPlan] ? initialPlan : "starter");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const current = PLANS[plan];
 
   const onCheckout = async () => {
     setError(null);
@@ -21,7 +33,7 @@ export default function CheckoutClient() {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, address, reportId }),
+        body: JSON.stringify({ email, address, reportId, plan }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Checkout failed");
@@ -47,8 +59,34 @@ export default function CheckoutClient() {
           <div className="rounded-2xl bg-white border border-stone-200 p-6 md:p-8 shadow-card">
             <h1 className="text-2xl font-extrabold text-ink-900">Unlock your full roof report</h1>
             <p className="mt-2 text-stone-600 text-sm">
-              Delivered in under 5 minutes. Emailed to you + available in your dashboard.
+              Buy a pack of credits. Run them anytime — credits never expire.
             </p>
+
+            <div className="mt-6">
+              <div className="text-sm font-semibold text-ink-900">Choose your pack</div>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {(Object.keys(PLANS) as PlanId[]).map((k) => {
+                  const p = PLANS[k];
+                  const active = k === plan;
+                  return (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() => setPlan(k)}
+                      className={`text-left rounded-xl border p-3 transition ${
+                        active
+                          ? "border-go-500 bg-go-50 ring-2 ring-go-500/30"
+                          : "border-stone-200 bg-white hover:border-stone-300"
+                      }`}
+                    >
+                      <div className="text-[10px] font-bold tracking-wider uppercase text-stone-500">{p.name}</div>
+                      <div className="mt-1 text-xl font-extrabold text-ink-900">${p.price}</div>
+                      <div className="text-[11px] text-stone-600">{p.reports} reports · {p.perReport} ea</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             <label className="mt-6 block">
               <span className="text-sm font-semibold text-ink-900">Email for your report</span>
@@ -74,7 +112,7 @@ export default function CheckoutClient() {
               className="mt-5 w-full inline-flex items-center justify-center gap-2 bg-go-500 hover:bg-go-600 text-white font-bold rounded-xl py-4 text-lg shadow-go disabled:opacity-60"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : <Lock size={18} />}
-              {loading ? "Redirecting to secure checkout…" : "Continue to Secure Checkout — $19"}
+              {loading ? "Redirecting to secure checkout…" : `Continue to Secure Checkout — $${current.price}`}
             </button>
 
             <div className="mt-4 flex items-center gap-2 text-xs text-stone-500">
@@ -85,18 +123,20 @@ export default function CheckoutClient() {
 
           <aside className="rounded-2xl bg-gradient-to-br from-trust-700 to-ink-900 text-white p-6 shadow-trust">
             <div className="text-xs font-bold tracking-[0.2em] text-go-300 uppercase">Order Summary</div>
-            <div className="mt-3 font-bold text-lg truncate">{address || "Your roof report"}</div>
+            <div className="mt-3 font-bold text-lg">{current.name} Pack</div>
+            <div className="text-sm text-trust-200">{current.reports} report credits · {current.perReport} each</div>
+            {address && <div className="mt-4 text-xs text-trust-200 truncate">Report to run first: {address}</div>}
             {reportId && <div className="text-xs font-mono text-trust-200">ID: {reportId}</div>}
             <div className="mt-6 space-y-2 text-sm">
-              <Row k="Full facet breakdown" />
+              <Row k="Full facet breakdown per report" />
               <Row k="Ridge · Hip · Valley · Eave · Rake (LF)" />
               <Row k="Waste factor" />
               <Row k="Insurance-ready PDF" />
-              <Row k="Dashboard access + email delivery" />
+              <Row k="Credits never expire" />
             </div>
             <div className="mt-5 pt-5 border-t border-white/10 flex items-baseline justify-between">
               <span className="text-trust-200">Total</span>
-              <span className="text-3xl font-extrabold">$19.00</span>
+              <span className="text-3xl font-extrabold">${current.price}.00</span>
             </div>
             <div className="mt-4 text-xs text-trust-200">
               Money-back guarantee — if your report is outside our ±2% accuracy tolerance, we'll refund and re-run.

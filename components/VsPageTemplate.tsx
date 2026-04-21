@@ -129,7 +129,7 @@ export default function VsPageTemplate({
         </div>
       </section>
 
-      <MobileStickyCTA label={`Switch from ${competitor}`} price="$19" />
+      <MobileStickyCTA label={`Switch from ${competitor}`} price="From $5" />
     </>
   );
 }

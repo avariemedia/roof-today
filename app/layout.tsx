@@ -16,7 +16,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.roof-today.com
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Roof Today — Instant Roof Measurement Reports. $19. No Subscription.",
+    default: "Roof Today — Accurate Aerial Roof Measurement Reports. 2 for $25.",
     template: "%s | Roof Today",
   },
   description:
@@ -35,14 +35,14 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE_URL,
     siteName: "Roof Today",
-    title: "Roof Today — Instant Roof Measurement Reports. $19.",
+    title: "Roof Today — Accurate Aerial Roof Measurement Reports.",
     description:
-      "The EagleView alternative contractors actually use. Reports in minutes. Pay per report. Free sample on any address.",
+      "The EagleView alternative contractors actually use. Accurate to ±2%. Reports in minutes. 2 reports $25 · 10 for $50. Free sample on any address.",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Roof Today" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Roof Today — $19 Roof Reports. No Subscription.",
+    title: "Roof Today — Roof Reports from $5 each. No Subscription.",
     description:
       "The EagleView alternative contractors actually use. Free sample on any address.",
     images: ["/og.png"],

@@ -9,7 +9,7 @@ import MobileStickyCTA from "@/components/MobileStickyCTA";
 import { ArrowRight, Check, Clock, DollarSign, MapPin, Shield, Zap } from "lucide-react";
 
 export const metadata = {
-  title: "Roof Today — Instant Roof Measurement Reports. $19. No Subscription.",
+  title: "Roof Today — Accurate Aerial Roof Measurement Reports. 2 for $25.",
   description:
     "Accurate aerial roof measurement reports in minutes — up to 70% cheaper than EagleView. Enter any address, preview your report free, pay only when you need it.",
   alternates: { canonical: "/" },
@@ -18,11 +18,11 @@ export const metadata = {
 const faqItems = [
   {
     q: "How much does a Roof Today report cost?",
-    a: "$19 per report. No subscription, no contracts, no minimums. Bulk packs and Pro plans are available if you run 10+ reports a month, but the default is simple pay-per-report pricing.",
+    a: "Tiered: 2 reports for $25 (Starter), 10 for $50 (Pro), 50 for $200 (Volume). That's as low as $4 per report. One-time purchase — no subscription, no contracts, credits never expire.",
   },
   {
     q: "How is Roof Today different from EagleView?",
-    a: "EagleView typically costs around $85 per report and requires a subscription or account commitment. Roof Today is $19 per report with no subscription, delivers in minutes instead of hours, and lets you preview any address for free before paying.",
+    a: "EagleView typically costs around $85 per report and requires a subscription or account commitment. Roof Today runs as low as $4 per report with no subscription, delivers in minutes instead of hours, and lets you preview any address for free before paying.",
   },
   {
     q: "How accurate are Roof Today measurements?",
@@ -59,7 +59,7 @@ export default function HomePage() {
               <h1 className="mt-5 font-extrabold tracking-tight text-ink-900 text-display-xl">
                 Roof reports in <span className="text-go-600">minutes.</span>
                 <br className="hidden sm:block" />
-                <span className="text-trust-700">$19.</span> No subscription.
+                <span className="text-trust-700">From $5.</span> No subscription.
               </h1>
 
               <p className="mt-5 text-lg md:text-xl text-stone-600 max-w-xl leading-relaxed">
@@ -132,7 +132,7 @@ export default function HomePage() {
             {[
               { n: "01", icon: MapPin, title: "Enter any address", body: "Google-powered autocomplete. No signup. No credit card. Takes 5 seconds." },
               { n: "02", icon: Zap, title: "Preview instantly", body: "Our system finds your roof, maps every facet, and generates your report in seconds." },
-              { n: "03", icon: DollarSign, title: "Unlock for $19", body: "One tap. Apple Pay, Google Pay, or card. Full PDF delivered instantly + emailed to you." },
+              { n: "03", icon: DollarSign, title: "Unlock a pack", body: "One tap. Starter 2 for $25 or Pro 10 for $50. Apple Pay, Google Pay, or card. Full PDFs emailed instantly." },
             ].map((step) => (
               <div key={step.n} className="relative rounded-2xl border border-stone-200 bg-white p-7 shadow-card">
                 <div className="absolute -top-3 left-7 text-xs font-mono font-bold tracking-wider bg-ink-900 text-white px-2.5 py-1 rounded">
@@ -190,7 +190,7 @@ export default function HomePage() {
             </div>
             <h2 className="mt-4 text-display-md text-white">
               Run 20 reports a month? You're burning{" "}
-              <span className="text-go-400">$15,840/year</span> on EagleView.
+              <span className="text-go-400">$19,200/year</span> on EagleView.
             </h2>
             <p className="mt-4 text-stone-300 text-lg max-w-lg">
               That's a new truck payment. A bigger ad budget. A hire. Stop renting roof data.
@@ -230,12 +230,12 @@ export default function HomePage() {
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <Shield className="mx-auto text-go-400" size={32} />
           <h2 className="mt-4 text-display-lg text-white">
-            Get your first report for $19.
+            2 reports for $25.
             <br />
-            Preview it for free.
+            Preview any address free.
           </h2>
           <p className="mt-4 text-trust-100 text-lg">
-            Enter any U.S. address. See a real report in seconds. Unlock for $19 if you love it.
+            Enter any U.S. address. See a real report in seconds. Unlock a 2-pack for $25 or a 10-pack for $50.
           </p>
           <div className="mt-8 max-w-xl mx-auto">
             <AddressCapture size="lg" placeholder="123 Main St, Your City, ST" />
@@ -259,7 +259,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <MobileStickyCTA label="Get Free Sample" price="$19" />
+      <MobileStickyCTA label="Get Free Sample" price="From $25" />
     </>
   );
 }
@@ -274,8 +274,10 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 function SavingsCard({ count, highlight }: { count: number; highlight?: boolean }) {
+  // Blended Roof Today cost per report based on cheapest tier applicable
+  const perReport = count >= 50 ? 4 : count >= 10 ? 5 : 12.5;
   const evCost = count * 85 * 12;
-  const rtCost = count * 19 * 12;
+  const rtCost = Math.round(count * perReport * 12);
   const saved = evCost - rtCost;
   return (
     <div

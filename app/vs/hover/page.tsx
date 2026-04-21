@@ -3,7 +3,7 @@ import VsPageTemplate from "@/components/VsPageTemplate";
 export const metadata = {
   title: "Hover Alternative — Roof Today Delivers Instantly With No App Required",
   description:
-    "Hover alternative: Roof Today doesn't require a homeowner to take photos. Enter any address, get an instant aerial roof measurement report for $19. No app, no photos, no wait.",
+    "Hover alternative: Roof Today doesn't require a homeowner to take photos. Enter any address, get an instant aerial roof measurement report for as low as $4. No app, no photos, no wait.",
   alternates: { canonical: "/vs/hover" },
 };
 
@@ -14,7 +14,7 @@ export default function Page() {
       tagline="No app. No photos. No homeowner required."
       intro="Hover requires a homeowner (or someone on-site) to take guided photos with their phone — then waits for processing. Roof Today skips all of that. Enter any U.S. address and get a full aerial roof measurement report in minutes. No app download, no photo shoot, no coordination."
       rows={[
-        { feature: "Price per report", rt: "$19", them: "~$50" },
+        { feature: "Price per report", rt: "From $5", them: "~$50" },
         { feature: "Homeowner photos required", rt: false, them: true },
         { feature: "Turnaround", rt: "Minutes", them: "Hours" },
         { feature: "Works without site access", rt: true, them: false },

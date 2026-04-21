@@ -5,70 +5,73 @@ import FAQ from "@/components/FAQ";
 import MobileStickyCTA from "@/components/MobileStickyCTA";
 
 export const metadata = {
-  title: "Roof Today Pricing — $19 Per Report. No Subscription.",
+  title: "Roof Today Pricing — 2 Reports $25 · 10 Reports $50",
   description:
-    "Pay $19 per roof measurement report. No subscription, no contracts, no minimums. Volume plans available. Up to 70% less than EagleView.",
+    "Tiered, pay-as-you-go pricing. 2 reports for $25. 10 reports for $50. No subscription, no contracts. Up to 90% less than EagleView.",
   alternates: { canonical: "/pricing" },
 };
 
 const tiers = [
   {
-    name: "Pay Per Report",
-    price: "$19",
-    sub: "per report",
-    best: true,
+    name: "Starter",
+    price: "$25",
+    sub: "2 reports · $12.50 each",
+    reports: 2,
     features: [
-      "Reports in minutes",
+      "2 full measurement reports",
       "Insurance-ready PDF",
-      "Interactive diagram",
+      "Interactive aerial + roof diagram",
       "±2% accuracy guarantee",
       "No subscription. Ever.",
     ],
-    cta: "Start with 1 Report",
-    href: "/#address",
+    cta: "Get 2 Reports",
+    href: "/checkout?plan=starter",
   },
   {
     name: "Pro",
-    price: "$99",
-    sub: "/month",
+    price: "$50",
+    sub: "10 reports · $5 each",
+    reports: 10,
+    best: true,
     features: [
-      "10 reports included",
-      "$12 per report after",
-      "Priority rendering",
-      "Dashboard + report history",
-      "Cancel anytime",
+      "10 full measurement reports",
+      "Insurance-ready PDFs",
+      "Interactive aerial + roof diagram",
+      "±2% accuracy guarantee",
+      "Priority rendering + support",
     ],
-    cta: "Go Pro",
-    href: "/signup?plan=pro",
+    cta: "Get 10 Reports",
+    href: "/checkout?plan=pro",
   },
   {
-    name: "Team",
-    price: "Custom",
-    sub: "volume pricing",
+    name: "Volume",
+    price: "$200",
+    sub: "50 reports · $4 each",
+    reports: 50,
     features: [
-      "Unlimited reports",
-      "API access",
-      "Multi-user dashboard",
-      "Priority support",
-      "Volume discounts",
+      "50 full measurement reports",
+      "Insurance-ready PDFs",
+      "Interactive aerial + roof diagram",
+      "±2% accuracy guarantee",
+      "Bulk dashboard + report history",
     ],
-    cta: "Talk to Sales",
-    href: "/contact?topic=team",
+    cta: "Get 50 Reports",
+    href: "/checkout?plan=volume",
   },
 ];
 
 const faqItems = [
   {
     q: "Is there really no subscription?",
-    a: "Correct. The default plan is pay-per-report at $19. Buy one. Buy none. No credit card on file, no auto-renew.",
+    a: "Correct. Every plan is a one-time purchase. Buy credits, use them when you need them — no auto-renew, no recurring charge.",
   },
   {
-    q: "What if I need more than 10 reports a month?",
-    a: "The Pro plan includes 10 reports/month for $99 and each additional report is $12. Teams running 50+ reports monthly get custom volume pricing — contact us.",
+    q: "Do credits expire?",
+    a: "No. Your report credits never expire. Run reports on your schedule.",
   },
   {
     q: "What if my report is wrong?",
-    a: "We guarantee ±2% accuracy. If your report is outside that tolerance, we refund your money and re-run the report at no cost.",
+    a: "We guarantee ±2% accuracy against ground truth. If your report is outside that tolerance, we refund your credit and re-run the report free.",
   },
   {
     q: "How fast are reports?",
@@ -78,6 +81,10 @@ const faqItems = [
     q: "Do insurance companies accept Roof Today reports?",
     a: "Yes. Our reports include every measurement category insurance adjusters require (squares, pitch, ridge/hip/valley/eave/rake LF, waste factor) and are accepted daily for storm and restoration claims.",
   },
+  {
+    q: "Running more than 50 reports a month?",
+    a: "Reach out — we offer custom volume pricing and API access for teams running 50+ reports monthly.",
+  },
 ];
 
 export default function PricingPage() {
@@ -86,11 +93,11 @@ export default function PricingPage() {
       <section className="py-14 md:py-20 bg-gradient-to-b from-trust-50/50 to-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 bg-go-50 text-go-700 border border-go-200 rounded-full px-3 py-1 text-xs font-semibold">
-            No subscription. No contracts. No nonsense.
+            No subscription. No contracts. Credits never expire.
           </div>
-          <h1 className="mt-5 text-display-lg text-ink-900">Simple pricing. Massive savings.</h1>
+          <h1 className="mt-5 text-display-lg text-ink-900">Pay once. Measure for less.</h1>
           <p className="mt-4 text-lg text-stone-600 max-w-2xl mx-auto">
-            $19 per report. That's it. Need more? Grab a Pro plan. Running a team? Get volume pricing.
+            Tiered pricing that gets cheaper the more you run. As low as <span className="font-semibold text-ink-900">$4 per report</span>.
           </p>
         </div>
       </section>
@@ -114,8 +121,8 @@ export default function PricingPage() {
               <h3 className={`font-bold text-lg ${t.best ? "text-white" : "text-ink-900"}`}>{t.name}</h3>
               <div className="mt-3 flex items-baseline gap-1.5">
                 <span className={`text-5xl font-extrabold ${t.best ? "text-white" : "text-ink-900"}`}>{t.price}</span>
-                <span className={`text-sm ${t.best ? "text-stone-300" : "text-stone-500"}`}>{t.sub}</span>
               </div>
+              <div className={`mt-1 text-sm ${t.best ? "text-stone-300" : "text-stone-500"}`}>{t.sub}</div>
               <ul className={`mt-6 space-y-3 text-sm ${t.best ? "text-stone-200" : "text-stone-700"}`}>
                 {t.features.map((f) => (
                   <li key={f} className="flex gap-2">
@@ -141,7 +148,7 @@ export default function PricingPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 flex flex-wrap justify-center gap-6 text-sm text-stone-500">
           <span className="inline-flex items-center gap-1.5"><Shield size={14} className="text-go-600" /> Money-back guarantee</span>
           <span className="inline-flex items-center gap-1.5"><Shield size={14} className="text-go-600" /> Stripe-secured checkout</span>
-          <span className="inline-flex items-center gap-1.5"><Crown size={14} className="text-go-600" /> 10,000+ reports delivered</span>
+          <span className="inline-flex items-center gap-1.5"><Crown size={14} className="text-go-600" /> Credits never expire</span>
         </div>
       </section>
 
@@ -163,7 +170,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <MobileStickyCTA label="Buy 1 Report" price="$19" />
+      <MobileStickyCTA label="Get 2 Reports" price="$25" />
     </>
   );
 }
