@@ -3,69 +3,52 @@
 @tailwind utilities;
 
 :root {
-  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
-  --font-display: "Inter", system-ui, -apple-system, sans-serif;
-  color-scheme: light;
+  --ink: #0b0f14;
+  --paper: #fafaf7;
+  --muted: #6b7280;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
-}
-
-body {
-  background: #fff;
-  color: #0F1628;
-  font-family: var(--font-inter);
-  font-feature-settings: "ss01", "cv11";
+html, body {
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "cv11", "ss01", "ss03";
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: var(--paper);
+  color: var(--ink);
 }
 
-/* Premium blur/lock effect for the gamified report */
-.lock-blur {
-  filter: blur(6px);
-  user-select: none;
-  pointer-events: none;
+* { box-sizing: border-box; }
+
+.mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+.hairline { border-color: rgba(11, 15, 20, 0.08); }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
-.shimmer-bg {
-  background: linear-gradient(
-    90deg,
-    rgba(42, 92, 219, 0.05) 0%,
-    rgba(52, 208, 118, 0.12) 50%,
-    rgba(42, 92, 219, 0.05) 100%
-  );
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #eee 0%, #f5f5f2 50%, #eee 100%);
   background-size: 200% 100%;
-  animation: shimmer 2.2s linear infinite;
+  animation: shimmer 1.6s infinite;
 }
 
-/* Aerial grid overlay used on hero/report visuals */
-.aerial-grid {
-  background-image:
-    linear-gradient(rgba(42, 92, 219, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(42, 92, 219, 0.08) 1px, transparent 1px);
-  background-size: 32px 32px;
+.gmap-autocomplete-container .pac-container {
+  border-radius: 12px;
+  border: 1px solid rgba(11,15,20,0.08);
+  box-shadow: 0 10px 40px rgba(11,15,20,0.12);
+  margin-top: 8px;
+  font-family: inherit;
 }
-
-/* Focus ring */
-*:focus-visible {
-  outline: 2px solid #10B85A;
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-
-/* Safe area for mobile sticky CTAs */
-.safe-bottom {
-  padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
-}
-
-/* Reserve space for mobile sticky CTAs so they don't cover content */
-@media (max-width: 767px) {
-  main { padding-bottom: 84px; }
-}
-
-/* Hide scrollbar utility for marquees */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

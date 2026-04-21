@@ -1,176 +1,106 @@
-import Link from "next/link";
-import { Check, ArrowRight, Shield, Zap, Crown } from "lucide-react";
-import ComparisonTable from "@/components/ComparisonTable";
-import FAQ from "@/components/FAQ";
-import MobileStickyCTA from "@/components/MobileStickyCTA";
+"use client";
 
-export const metadata = {
-  title: "Roof Today Pricing — 2 Reports $25 · 10 Reports $50",
-  description:
-    "Tiered, pay-as-you-go pricing. 2 reports for $25. 10 reports for $50. No subscription, no contracts. Up to 90% less than EagleView.",
-  alternates: { canonical: "/pricing" },
+import Link from "next/link";
+import { useState } from "react";
+import { Check, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type Tier = {
+  id: "starter" | "pro" | "volume";
+  name: string;
+  reports: number;
+  price: number;
+  desc: string;
+  highlight?: boolean;
+  features: string[];
 };
 
-const tiers = [
-  {
-    name: "Starter",
-    price: "$25",
-    sub: "2 reports · $12.50 each",
-    reports: 2,
-    features: [
-      "2 full measurement reports",
-      "Insurance-ready PDF",
-      "Interactive aerial + roof diagram",
-      "±2% accuracy guarantee",
-      "No subscription. Ever.",
-    ],
-    cta: "Get 2 Reports",
-    href: "/checkout?plan=starter",
-  },
-  {
-    name: "Pro",
-    price: "$50",
-    sub: "10 reports · $5 each",
-    reports: 10,
-    best: true,
-    features: [
-      "10 full measurement reports",
-      "Insurance-ready PDFs",
-      "Interactive aerial + roof diagram",
-      "±2% accuracy guarantee",
-      "Priority rendering + support",
-    ],
-    cta: "Get 10 Reports",
-    href: "/checkout?plan=pro",
-  },
-  {
-    name: "Volume",
-    price: "$200",
-    sub: "50 reports · $4 each",
-    reports: 50,
-    features: [
-      "50 full measurement reports",
-      "Insurance-ready PDFs",
-      "Interactive aerial + roof diagram",
-      "±2% accuracy guarantee",
-      "Bulk dashboard + report history",
-    ],
-    cta: "Get 50 Reports",
-    href: "/checkout?plan=volume",
-  },
+const TIERS: Tier[] = [
+  { id: "starter", name: "Starter", reports: 2, price: 25, desc: "Try the system", features: ["2 reports", "Full PDF + JSON", "EagleView-comparable data", "Email support"] },
+  { id: "pro", name: "Pro", reports: 10, price: 50, desc: "For active contractors", highlight: true, features: ["10 reports", "Everything in Starter", "Roof schematic", "Priority queue", "Slack/Teams delivery"] },
+  { id: "volume", name: "Volume", reports: 50, price: 200, desc: "For roofing operations", features: ["50 reports", "Everything in Pro", "API access", "CSV export", "Dedicated support"] },
 ];
 
-const faqItems = [
-  {
-    q: "Is there really no subscription?",
-    a: "Correct. Every plan is a one-time purchase. Buy credits, use them when you need them — no auto-renew, no recurring charge.",
-  },
-  {
-    q: "Do credits expire?",
-    a: "No. Your report credits never expire. Run reports on your schedule.",
-  },
-  {
-    q: "What if my report is wrong?",
-    a: "We guarantee ±2% accuracy against ground truth. If your report is outside that tolerance, we refund your credit and re-run the report free.",
-  },
-  {
-    q: "How fast are reports?",
-    a: "Most are delivered within minutes. Complex properties can take up to an hour. You'll always see an ETA at checkout.",
-  },
-  {
-    q: "Do insurance companies accept Roof Today reports?",
-    a: "Yes. Our reports include every measurement category insurance adjusters require (squares, pitch, ridge/hip/valley/eave/rake LF, waste factor) and are accepted daily for storm and restoration claims.",
-  },
-  {
-    q: "Running more than 50 reports a month?",
-    a: "Reach out — we offer custom volume pricing and API access for teams running 50+ reports monthly.",
-  },
-];
+export default function Pricing() {
+  const [loading, setLoading] = useState<string | null>(null);
 
-export default function PricingPage() {
+  async function checkout(tier: string) {
+    setLoading(tier);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier }),
+      });
+      const data = await res.json();
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Checkout could not start. Please try again.");
+        setLoading(null);
+      }
+    } catch {
+      alert("Network error.");
+      setLoading(null);
+    }
+  }
+
   return (
-    <>
-      <section className="py-14 md:py-20 bg-gradient-to-b from-trust-50/50 to-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-go-50 text-go-700 border border-go-200 rounded-full px-3 py-1 text-xs font-semibold">
-            No subscription. No contracts. Credits never expire.
-          </div>
-          <h1 className="mt-5 text-display-lg text-ink-900">Pay once. Measure for less.</h1>
-          <p className="mt-4 text-lg text-stone-600 max-w-2xl mx-auto">
-            Tiered pricing that gets cheaper the more you run. As low as <span className="font-semibold text-ink-900">$4 per report</span>.
-          </p>
-        </div>
-      </section>
+    <main className="min-h-screen">
+      <nav className="max-w-6xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">Roof Today</Link>
+        <Link className="px-3 py-1.5 rounded-lg hover:bg-ink/[0.04] text-sm" href="/">← Back</Link>
+      </nav>
 
-      <section className="pb-16 md:pb-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid md:grid-cols-3 gap-5 md:gap-6">
-          {tiers.map((t) => (
+      <section className="max-w-5xl mx-auto px-5 md:px-8 py-12 md:py-20">
+        <div className="text-[11px] uppercase tracking-wider text-ink/50 mb-2">Pricing</div>
+        <h1 className="text-3xl md:text-5xl font-semibold tracking-tight">Pay per report. No subscriptions.</h1>
+        <p className="mt-3 text-ink/60 max-w-xl">Buy credits once, use them whenever. Unused credits roll over.</p>
+
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {TIERS.map((t) => (
             <div
-              key={t.name}
-              className={`relative rounded-2xl border p-7 shadow-card ${
-                t.best
-                  ? "bg-ink-950 text-white border-ink-900 ring-4 ring-go-500/30"
-                  : "bg-white border-stone-200"
-              }`}
-            >
-              {t.best && (
-                <div className="absolute -top-3 left-6 inline-flex items-center gap-1 text-xs font-bold tracking-wider bg-go-500 text-white px-2.5 py-1 rounded">
-                  <Zap size={12} /> MOST POPULAR
-                </div>
+              key={t.id}
+              className={cn(
+                "rounded-2xl border p-6 flex flex-col bg-white",
+                t.highlight ? "border-ink shadow-[0_30px_60px_-30px_rgba(11,15,20,0.35)]" : "hairline",
               )}
-              <h3 className={`font-bold text-lg ${t.best ? "text-white" : "text-ink-900"}`}>{t.name}</h3>
-              <div className="mt-3 flex items-baseline gap-1.5">
-                <span className={`text-5xl font-extrabold ${t.best ? "text-white" : "text-ink-900"}`}>{t.price}</span>
+            >
+              {t.highlight && <div className="pill bg-ink text-paper w-fit mb-3">Most popular</div>}
+              <div className="text-[11px] uppercase tracking-wider text-ink/50">{t.name}</div>
+              <div className="mt-1 text-sm text-ink/60">{t.desc}</div>
+              <div className="mt-6 flex items-baseline gap-1">
+                <span className="text-5xl font-semibold tracking-tight">${t.price}</span>
+                <span className="text-ink/50 text-sm">/ pack</span>
               </div>
-              <div className={`mt-1 text-sm ${t.best ? "text-stone-300" : "text-stone-500"}`}>{t.sub}</div>
-              <ul className={`mt-6 space-y-3 text-sm ${t.best ? "text-stone-200" : "text-stone-700"}`}>
+              <div className="mt-1 text-sm text-ink/60">{t.reports} reports · ${(t.price / t.reports).toFixed(2)} each</div>
+              <ul className="mt-6 space-y-2 text-sm">
                 {t.features.map((f) => (
-                  <li key={f} className="flex gap-2">
-                    <Check className={`shrink-0 mt-0.5 ${t.best ? "text-go-400" : "text-go-600"}`} size={18} />
-                    {f}
+                  <li key={f} className="flex items-start gap-2">
+                    <Check className="w-4 h-4 mt-0.5 text-ink/60 shrink-0" />
+                    <span>{f}</span>
                   </li>
                 ))}
               </ul>
-              <Link
-                href={t.href}
-                className={`mt-8 inline-flex w-full items-center justify-center gap-2 font-semibold rounded-xl py-3.5 transition ${
-                  t.best
-                    ? "bg-go-500 hover:bg-go-600 text-white shadow-go"
-                    : "bg-ink-900 hover:bg-ink-800 text-white"
-                }`}
+              <button
+                onClick={() => checkout(t.id)}
+                disabled={loading !== null}
+                className={cn(
+                  "mt-8 rounded-xl px-4 py-3 font-medium text-sm flex items-center justify-center gap-2 transition-colors",
+                  t.highlight ? "bg-ink text-paper hover:bg-ink/90" : "bg-ink/[0.04] hover:bg-ink/[0.08]",
+                )}
               >
-                {t.cta} <ArrowRight size={16} />
-              </Link>
+                {loading === t.id ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                {loading === t.id ? "Redirecting…" : "Buy now"}
+              </button>
             </div>
           ))}
         </div>
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 flex flex-wrap justify-center gap-6 text-sm text-stone-500">
-          <span className="inline-flex items-center gap-1.5"><Shield size={14} className="text-go-600" /> Money-back guarantee</span>
-          <span className="inline-flex items-center gap-1.5"><Shield size={14} className="text-go-600" /> Stripe-secured checkout</span>
-          <span className="inline-flex items-center gap-1.5"><Crown size={14} className="text-go-600" /> Credits never expire</span>
-        </div>
+        <p className="mt-10 text-xs text-ink/40 text-center">
+          Secure checkout via Stripe. Volume 100+ — <a className="underline" href="mailto:hello@roof-today.com">contact us</a>.
+        </p>
       </section>
-
-      <section className="py-16 bg-stone-50 border-y border-stone-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-display-md text-ink-900 max-w-2xl">
-            The real cost of EagleView vs Roof Today
-          </h2>
-          <div className="mt-10">
-            <ComparisonTable />
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 md:py-20 bg-white">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-display-md text-ink-900 text-center">Pricing questions</h2>
-          <div className="mt-10"><FAQ items={faqItems} /></div>
-        </div>
-      </section>
-
-      <MobileStickyCTA label="Get 2 Reports" price="$25" />
-    </>
+    </main>
   );
 }

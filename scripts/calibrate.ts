@@ -1,110 +1,90 @@
 /**
- * Calibration harness: compare /api/measure output vs EagleView ground truth.
+ * Calibration harness.
  *
  * Usage:
- *   1. Site must be live at TARGET_URL with Google Maps + Solar API key in env
- *   2. npx tsx scripts/calibrate.ts
+ *   1. Start dev server:  npm run dev   (in another terminal)
+ *   2. Run:               npm run calibrate
  *
- * It geocodes each sample address, calls /api/measure, and scores:
- *   - squares within ±10%
- *   - facetCount within ±2
- *   - predominant pitch exact match
- *   - per-pitch breakdown (top pitch % within ±10 percentage points)
+ * Runs the 3 EagleView truth samples through /api/geocode + /api/measure,
+ * then compares via lib/report/compare and prints a PASS/FAIL table.
+ *
+ * Set CALIBRATE_BASE_URL to target a deployed instance.
  */
-import fs from "fs";
-import path from "path";
+import { EAGLEVIEW_SAMPLES } from "../lib/report/eagleview-truth";
+import { compareToEagleView } from "../lib/report/compare";
 
-const TARGET_URL = process.env.TARGET_URL || "https://roof-today.com";
-const GEOCODE_KEY = process.env.GOOGLE_MAPS_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+const BASE = process.env.CALIBRATE_BASE_URL || "http://localhost:3000";
 
-type Sample = {
-  reportId: string;
-  address: string;
-  groundTruth: {
-    squares: number;
-    facetCount: number;
-    predominantPitch: string;
-    pitchBreakdown: { pitch: string; pct: number }[];
-  };
-};
+const GREEN = "\x1b[32m";
+const RED = "\x1b[31m";
+const DIM = "\x1b[2m";
+const RESET = "\x1b[0m";
+const BOLD = "\x1b[1m";
 
-async function geocode(address: string): Promise<{ lat: number; lng: number; placeId: string }> {
-  if (!GEOCODE_KEY) throw new Error("GOOGLE_MAPS_API_KEY or NEXT_PUBLIC_GOOGLE_MAPS_API_KEY required");
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GEOCODE_KEY}`;
-  const r = await fetch(url);
-  const data = await r.json();
-  if (data.status !== "OK" || !data.results?.[0]) throw new Error(`Geocode failed: ${data.status}`);
-  const result = data.results[0];
-  return {
-    lat: result.geometry.location.lat,
-    lng: result.geometry.location.lng,
-    placeId: result.place_id,
-  };
+function tag(status: "PASS" | "FAIL" | "INFO") {
+  if (status === "PASS") return `${GREEN}PASS${RESET}`;
+  if (status === "FAIL") return `${RED}FAIL${RESET}`;
+  return `${DIM}INFO${RESET}`;
 }
 
-async function measure(lat: number, lng: number, placeId: string) {
-  const r = await fetch(`${TARGET_URL}/api/measure`, {
+async function geocode(address: string): Promise<{ lat: number; lng: number; formatted: string }> {
+  const r = await fetch(`${BASE}/api/geocode`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ lat, lng, placeId }),
+    body: JSON.stringify({ address }),
   });
-  if (!r.ok) throw new Error(`/api/measure returned ${r.status}`);
+  const d = await r.json();
+  if (!d?.lat || !d?.lng) throw new Error(`geocode failed for "${address}"`);
+  return { lat: d.lat, lng: d.lng, formatted: d.formatted || address };
+}
+
+async function measure(lat: number, lng: number, address: string) {
+  const r = await fetch(`${BASE}/api/measure`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ lat, lng, address }),
+  });
+  if (!r.ok) throw new Error(`measure failed (${r.status}): ${await r.text()}`);
   return r.json();
 }
 
-function score(sample: Sample, result: any) {
-  const gt = sample.groundTruth;
-  const squaresErr = Math.abs(result.totals.squares - gt.squares) / gt.squares;
-  const facetErr = Math.abs(result.totals.facetCount - gt.facetCount);
-  const pitchMatch = result.totals.predominantPitch === gt.predominantPitch;
-
-  const squaresPass = squaresErr <= 0.10;
-  const facetPass = facetErr <= 2;
-
-  return {
-    address: sample.address,
-    source: result.source,
-    imageryQuality: result.building?.imageryQuality,
-    squares: { got: result.totals.squares, expected: gt.squares, errPct: (squaresErr * 100).toFixed(1) + "%", pass: squaresPass },
-    facets: { got: result.totals.facetCount, expected: gt.facetCount, delta: facetErr, pass: facetPass },
-    pitch: { got: result.totals.predominantPitch, expected: gt.predominantPitch, pass: pitchMatch },
-    pitchBreakdown: { got: result.totals.pitchBreakdown, expected: gt.pitchBreakdown },
-    overallPass: squaresPass && facetPass && pitchMatch,
-  };
-}
-
 async function main() {
-  const groundTruthPath = path.join(__dirname, "eagleview-ground-truth.json");
-  const { samples } = JSON.parse(fs.readFileSync(groundTruthPath, "utf8")) as { samples: Sample[] };
+  console.log(`\n  ${BOLD}Roof Today — EagleView calibration${RESET}`);
+  console.log(`  Target: ${BASE}\n`);
 
-  console.log(`Calibrating against ${TARGET_URL}\n`);
-  const results = [];
+  let totalPass = 0;
+  let totalFail = 0;
 
-  for (const s of samples) {
-    console.log(`→ ${s.reportId}: ${s.address}`);
+  for (const s of EAGLEVIEW_SAMPLES) {
+    console.log(`  ${BOLD}${s.reportId}${RESET}  ${DIM}${s.address}${RESET}`);
     try {
-      const coords = await geocode(s.address);
-      const result = await measure(coords.lat, coords.lng, coords.placeId);
-      const report = score(s, result);
-      results.push(report);
-      console.log(`  Source: ${report.source} (${report.imageryQuality || "n/a"})`);
-      console.log(`  Squares: ${report.squares.got} vs ${report.squares.expected} (${report.squares.errPct}) ${report.squares.pass ? "✓" : "✗"}`);
-      console.log(`  Facets:  ${report.facets.got} vs ${report.facets.expected} (Δ${report.facets.delta}) ${report.facets.pass ? "✓" : "✗"}`);
-      console.log(`  Pitch:   ${report.pitch.got} vs ${report.pitch.expected} ${report.pitch.pass ? "✓" : "✗"}`);
-      console.log(`  Overall: ${report.overallPass ? "PASS" : "FAIL"}\n`);
+      const geo = await geocode(s.address);
+      const report = await measure(geo.lat, geo.lng, geo.formatted);
+      const cmp = compareToEagleView(report, s);
+
+      console.log(`  overall:  ${tag(cmp.overall)}  (passed ${cmp.passed} / failed ${cmp.failed})`);
+      console.log(`  confidence: ${report.confidence.tier} · ${Math.round(report.confidence.score * 100)}%  source=${report.source}`);
+      for (const f of cmp.fields) {
+        const dev = f.deviationPct != null ? ` dev=${f.deviationPct.toFixed(1)}%` : "";
+        console.log(`    ${tag(f.status)}  ${f.field.padEnd(40)}  got=${String(f.got).padEnd(16)} expected=${String(f.expected).padEnd(14)}${dev}`);
+      }
+      if (cmp.overall === "PASS") totalPass++;
+      else totalFail++;
     } catch (e: any) {
-      console.log(`  ERROR: ${e.message}\n`);
-      results.push({ address: s.address, error: e.message });
+      console.log(`  ${tag("FAIL")}  ${e?.message || "error"}`);
+      totalFail++;
     }
+    console.log();
   }
 
-  const passCount = results.filter((r: any) => r.overallPass).length;
-  console.log(`\n=== ${passCount}/${results.length} samples passed ===`);
-
-  fs.writeFileSync(
-    path.join(__dirname, "calibration-results.json"),
-    JSON.stringify(results, null, 2)
-  );
+  console.log("  " + "─".repeat(74));
+  const ok = totalFail === 0;
+  const color = ok ? GREEN : RED;
+  console.log(`  ${color}${totalPass} / ${EAGLEVIEW_SAMPLES.length} samples PASS${RESET}\n`);
+  process.exit(ok ? 0 : 1);
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(2);
+});

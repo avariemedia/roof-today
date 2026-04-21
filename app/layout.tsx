@@ -1,111 +1,31 @@
-import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.roof-today.com";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: "Roof Today — Accurate Aerial Roof Measurement Reports. 2 for $25.",
-    template: "%s | Roof Today",
-  },
+  title: "Roof Today — Instant roof measurement reports",
   description:
-    "Accurate aerial roof measurement reports in minutes — up to 70% cheaper than EagleView. Enter any address, preview your report free, pay only when you need it. No subscription. No contracts.",
-  keywords: [
-    "roof measurement report",
-    "aerial roof measurement",
-    "EagleView alternative",
-    "GAF QuickMeasure alternative",
-    "instant roof report",
-    "cheap roof measurements",
-    "roof report for contractors",
-  ],
-  alternates: { canonical: "/" },
+    "EagleView-grade roof measurement reports in seconds. Photogrammetry + AI from public aerial imagery. Squares, pitch, facets, ridge/hip/valley/eave/rake — delivered as a PDF.",
   openGraph: {
+    title: "Roof Today",
+    description: "Instant, accurate roof measurement reports.",
     type: "website",
-    url: SITE_URL,
-    siteName: "Roof Today",
-    title: "Roof Today — Accurate Aerial Roof Measurement Reports.",
-    description:
-      "The EagleView alternative contractors actually use. Accurate to ±2%. Reports in minutes. 2 reports $25 · 10 for $50. Free sample on any address.",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Roof Today" }],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Roof Today — Roof Reports from $5 each. No Subscription.",
-    description:
-      "The EagleView alternative contractors actually use. Free sample on any address.",
-    images: ["/og.png"],
-  },
-  robots: { index: true, follow: true },
-  icons: { icon: "/favicon.svg" },
 };
 
-export const viewport: Viewport = {
-  themeColor: "#0A1428",
-  width: "device-width",
-  initialScale: 1,
-};
+const GMAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${SITE_URL}#organization`,
-        name: "Roof Today",
-        url: SITE_URL,
-        logo: `${SITE_URL}/logo.svg`,
-        sameAs: [],
-      },
-      {
-        "@type": "WebSite",
-        "@id": `${SITE_URL}#website`,
-        url: SITE_URL,
-        name: "Roof Today",
-        publisher: { "@id": `${SITE_URL}#organization` },
-        potentialAction: {
-          "@type": "SearchAction",
-          target: `${SITE_URL}/search?q={search_term_string}`,
-          "query-input": "required name=search_term_string",
-        },
-      },
-      {
-        "@type": "SoftwareApplication",
-        name: "Roof Today",
-        operatingSystem: "Web",
-        applicationCategory: "BusinessApplication",
-        offers: { "@type": "Offer", price: "19.00", priceCurrency: "USD" },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.9",
-          reviewCount: "218",
-        },
-      },
-    ],
-  };
-
   return (
-    <html lang="en" className={inter.variable}>
-      <body>
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-        />
+    <html lang="en">
+      <body className="min-h-screen bg-paper text-ink antialiased">
+        {GMAPS_KEY ? (
+          <Script
+            src={`https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&libraries=places&v=weekly`}
+            strategy="afterInteractive"
+          />
+        ) : null}
+        {children}
       </body>
     </html>
   );
