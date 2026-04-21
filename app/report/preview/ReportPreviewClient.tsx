@@ -28,6 +28,7 @@ type MeasureResponse = {
     slant_sqft: number;
     squares: number;
     predominantPitch: string;
+    pitchBreakdown?: { pitch: string; pct: number; slantSqft: number }[];
     ridgeLf: number;
     hipLf: number;
     valleyLf: number;
@@ -198,6 +199,27 @@ export default function ReportPreviewClient() {
               <BigStat label="Predominant Pitch" value={totals?.predominantPitch || "…"} free />
               <BigStat label="Facets" value={totals ? String(totals.facetCount) : "…"} free />
             </div>
+
+            {/* Pitch breakdown table — EagleView-style */}
+            {totals?.pitchBreakdown && totals.pitchBreakdown.length > 0 && (
+              <div className="rounded-2xl bg-white border border-stone-200 shadow-card overflow-hidden">
+                <div className="px-5 py-3 border-b border-stone-200 bg-stone-50 flex items-center justify-between">
+                  <h3 className="font-bold text-ink-900 text-sm">Pitch breakdown</h3>
+                  <span className="text-[11px] font-semibold tracking-wider text-stone-500 uppercase">By roof area</span>
+                </div>
+                <div className="divide-y divide-stone-100">
+                  {totals.pitchBreakdown.map((b) => (
+                    <div key={b.pitch} className="px-5 py-3 flex items-center gap-4">
+                      <div className="w-14 font-mono font-bold text-ink-900">{b.pitch}</div>
+                      <div className="flex-1 h-2 bg-stone-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-go-500" style={{ width: `${b.pct}%` }} />
+                      </div>
+                      <div className="w-12 text-right text-sm font-semibold text-ink-900 tabular-nums">{b.pct}%</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Selected plane details */}
             {selectedPlaneId && measure && (() => {

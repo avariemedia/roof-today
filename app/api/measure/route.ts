@@ -127,9 +127,22 @@ export async function POST(req: Request) {
     const totalSlantSqft = planes.reduce((s, p) => s + p.slant_area_sqft, 0);
     const totalSquares = totalSlantSqft / 100;
 
-    // Predominant pitch = area-weighted avg pitch
-    const weightedPitch = planes.reduce((s, p) => s + p.pitch_deg * p.area_sqft, 0) / (totalHorizSqft || 1);
-    const predominantPitch = degToPitchRatio(weightedPitch);
+    // Per-pitch breakdown (EagleView-style): bucket planes by rounded pitch ratio, weight by slant area
+    const pitchBuckets = new Map<string, number>();
+    for (const p of planes) {
+      const key = p.pitch_ratio;
+      pitchBuckets.set(key, (pitchBuckets.get(key) || 0) + p.slant_area_sqft);
+    }
+    const pitchBreakdown = Array.from(pitchBuckets.entries())
+      .map(([pitch, slantSqft]) => ({
+        pitch,
+        pct: Math.round((slantSqft / (totalSlantSqft || 1)) * 100),
+        slantSqft: Math.round(slantSqft),
+      }))
+      .sort((a, b) => b.pct - a.pct);
+
+    // Predominant pitch = pitch bucket with the largest slant-area share
+    const predominantPitch = pitchBreakdown[0]?.pitch || degToPitchRatio(0);
 
     // Linear footage estimates from perimeters
     // This is approximate — true ridge/hip/valley requires polygon adjacency analysis.
@@ -170,6 +183,7 @@ export async function POST(req: Request) {
         slant_sqft: Math.round(totalSlantSqft),
         squares: Number(totalSquares.toFixed(1)),
         predominantPitch,
+        pitchBreakdown,
         ridgeLf,
         hipLf,
         valleyLf,
@@ -220,6 +234,12 @@ function mockResponse(lat: number, lng: number) {
     };
   });
   const perimFt = Math.sqrt(totalHorizSqft) * 4 * 1.2;
+  const totalSlantForMock = planes.reduce((s, p) => s + p.slant_area_sqft, 0);
+  const mockBuckets = new Map<string, number>();
+  for (const p of planes) mockBuckets.set(p.pitch_ratio, (mockBuckets.get(p.pitch_ratio) || 0) + p.slant_area_sqft);
+  const mockPitchBreakdown = Array.from(mockBuckets.entries())
+    .map(([pitch, slantSqft]) => ({ pitch, pct: Math.round((slantSqft / (totalSlantForMock || 1)) * 100), slantSqft: Math.round(slantSqft) }))
+    .sort((a, b) => b.pct - a.pct);
   return {
     source: "mock",
     center: { lat, lng },
@@ -230,7 +250,8 @@ function mockResponse(lat: number, lng: number) {
       horizontal_sqft: Math.round(totalHorizSqft),
       slant_sqft: Math.round(totalSlantSqft),
       squares: Number((totalSlantSqft / 100).toFixed(1)),
-      predominantPitch: degToPitchRatio(pitchDeg),
+      predominantPitch: mockPitchBreakdown[0]?.pitch || degToPitchRatio(pitchDeg),
+      pitchBreakdown: mockPitchBreakdown,
       ridgeLf: Math.round(perimFt * 0.18),
       hipLf: Math.round(perimFt * 0.10),
       valleyLf: Math.round(perimFt * 0.08),
