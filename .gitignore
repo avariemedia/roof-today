@@ -6,3 +6,7 @@ node_modules
 *.log
 .DS_Store
 .vercel
+tsconfig.tsbuildinfo
+.claude/
+.mcp.json
+CLAUDE.md

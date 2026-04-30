@@ -25,14 +25,17 @@ export async function POST(req: NextRequest) {
   }
 
   if (!key) {
-    // Deterministic fallback — hash the address to a pseudo-location (CONUS).
-    let h = 0;
-    for (let i = 0; i < address.length; i++) h = (h * 31 + address.charCodeAt(i)) >>> 0;
-    const lat = 30 + ((h >>> 0) % 1500) / 100; // 30.00 .. 45.00
-    const lng = -120 + ((h >>> 8) % 4500) / 100; // -120.00 .. -75.00
-    return NextResponse.json({
-      lat, lng, formatted: address, placeId: null, mock: true,
-    });
+    // No Maps key configured and this is not a calibration sample.
+    // Refuse instead of synthesizing pseudo-coords — silently mocking a real
+    // user's address would route them to a confidently-wrong report.
+    return NextResponse.json(
+      {
+        error: "geocoder unavailable",
+        code: "geocoder_unavailable",
+        detail: "Address lookup is not configured on this deployment.",
+      },
+      { status: 503 },
+    );
   }
 
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${key}`;

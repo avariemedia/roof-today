@@ -32,6 +32,9 @@ export async function createCheckoutSession(tier: Tier, origin: string): Promise
   body.append("success_url", `${origin}/success?session={CHECKOUT_SESSION_ID}&reports=${t.reports}`);
   body.append("cancel_url", `${origin}/pricing?canceled=1`);
   body.append("payment_method_types[]", "card");
+  // `tier` lets the webhook map the paid session back to a known credit pack
+  // even if the price IDs were created out-of-band (no inline amount match).
+  body.append("metadata[tier]", tier);
 
   if (priceIdEnv) {
     body.append("line_items[0][price]", priceIdEnv);

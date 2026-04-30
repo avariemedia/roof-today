@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-calibrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Force the calibration + mock paths. Production secrets are never
+      # injected into CI — the harness must pass with no Maps/Solar/Stripe key.
+      NODE_ENV: production
+      CALIBRATE_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Unit tests (credits + webhook signature)
+        run: npm run test:unit
+
+      - name: Build
+        run: npm run build
+
+      - name: Start server
+        run: |
+          nohup npm run start > server.log 2>&1 &
+          echo $! > server.pid
+          for i in $(seq 1 40); do
+            if curl -fsS http://localhost:3000/ > /dev/null 2>&1; then
+              echo "server up after ${i} tries"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "server failed to start" >&2
+          tail -n 200 server.log >&2
+          exit 1
+
+      - name: Calibrate (3 EagleView samples must PASS)
+        run: npm run calibrate
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill "$(cat server.pid)" || true
+          fi
+
+      - name: Upload server log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-log
+          path: server.log
