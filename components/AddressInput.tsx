@@ -20,6 +20,7 @@ export default function AddressInput({ autoFocus = true, size = "lg" }: Props) {
   const [value, setValue] = useState("");
   const [ready, setReady] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     let tries = 0;
@@ -59,21 +60,30 @@ export default function AddressInput({ autoFocus = true, size = "lg" }: Props) {
     e.preventDefault();
     if (!value.trim() || loading) return;
     setLoading(true);
+    setErrorMsg(null);
     try {
       const res = await fetch("/api/geocode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ address: value }),
       });
-      const data = await res.json();
-      if (data?.lat && data?.lng) {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data?.lat && data?.lng) {
         go(data.lat, data.lng, data.formatted, data.placeId);
-      } else {
-        alert("Could not locate that address. Try a different format.");
-        setLoading(false);
+        return;
       }
+      if (res.status === 503) {
+        setErrorMsg(
+          "Address lookup is currently unavailable. Please contact support@roof-today.com.",
+        );
+      } else if (res.status === 404) {
+        setErrorMsg("We couldn't locate that address. Try a different format.");
+      } else {
+        setErrorMsg(data?.error || "Address lookup failed. Please try again.");
+      }
+      setLoading(false);
     } catch {
-      alert("Network error geocoding address.");
+      setErrorMsg("Network error contacting the address lookup service.");
       setLoading(false);
     }
   }
@@ -116,6 +126,11 @@ export default function AddressInput({ autoFocus = true, size = "lg" }: Props) {
         </button>
       </label>
       {!ready && <p className="mt-2 text-xs text-ink/40">Loading address lookup…</p>}
+      {errorMsg && (
+        <p role="alert" className="mt-2 text-xs text-red-600">
+          {errorMsg}
+        </p>
+      )}
     </form>
   );
 }
